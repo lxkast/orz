@@ -1,10 +1,53 @@
 #include "terminal.h"
 #include "utils.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <errno.h>
+#include <sys/ioctl.h>
 
 struct termios prev_terminal_attributes;
+
+int get_window_size(int* rows, int* cols) {
+    struct winsize ws;
+
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1)
+        return -1;
+    else {
+        *rows = ws.ws_row;
+        *cols = ws.ws_col;
+        return 0;
+    }
+}
+
+char read_key() {
+    char c;
+    if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN)
+        kill_self("read");
+    return c;
+}
+
+int get_cursor_pos(int* row, int* col) {
+    char buffer[32];
+    unsigned int i = 0;
+    // query the terminal for cursor pos
+    if (write(STDOUT_FILENO, "\x1b[6n", 4) != 4)
+        return -1;
+    while (i < sizeof(buffer) - 1) {
+        if (read(STDIN_FILENO, &buffer[i], 1) != 1) break;
+        if (buffer[i] == 'R')
+            break;
+        i++;
+    }
+    buffer[i] = '\0';
+    // the response is an escape sequence
+    if (buffer[0] != '\x1b' || buffer[1] != '[') 
+        return -1;
+    if (sscanf(&buffer[2], "%d;%d", row, col) != 2)
+        return -1;
+    return 0;
+}
 
 void disable_raw_terminal() {
     // TCSAFLUSH sets terminal attributes after the buffer is flushed.

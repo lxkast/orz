@@ -6,8 +6,8 @@ SRC_DIR = src
 OBJ_DIR = obj
 
 # Source and object files
-SRCS = $(SRC_DIR)/orz.c $(SRC_DIR)/utils.c $(SRC_DIR)/terminal.c
-OBJS = $(OBJ_DIR)/orz.o $(OBJ_DIR)/utils.o $(OBJ_DIR)/terminal.o
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Target executable
 TARGET = orz
