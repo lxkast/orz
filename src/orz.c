@@ -4,7 +4,9 @@
 #include "input.h"
 #include "cfg.h"
 
-CFG cfg = {0, 0};
+#define version "0.0.1"
+
+CFG cfg = {0, 0, 0, 0};
 
 void init() {
     enable_raw_terminal();
@@ -17,7 +19,7 @@ int main(){
 
     while (1) {
         refresh_screen(&cfg);
-        process_key(); 
+        process_key(&cfg); 
     }
     return 0;
 }

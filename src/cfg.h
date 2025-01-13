@@ -1,6 +1,6 @@
 #pragma once
 
 typedef struct CFG {
-    int screen_rows;
-    int screen_cols;
+    int cx, cy;
+    int screen_rows, screen_cols;
 } CFG;

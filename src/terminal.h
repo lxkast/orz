@@ -1,3 +1,11 @@
+enum keys {
+    ARROW_LEFT = 1000,
+    ARROW_RIGHT,
+    ARROW_UP,
+    ARROW_DOWN,
+    DELETE_KEY
+};
+
 void enable_raw_terminal();
-char read_key();
+int read_key();
 int get_window_size(int*, int*);

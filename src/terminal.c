@@ -21,10 +21,34 @@ int get_window_size(int* rows, int* cols) {
     }
 }
 
-char read_key() {
+int read_key() {
     char c;
     if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN)
         kill_self("read");
+
+    if (c == '\x1b') {
+        char sequence[3];
+        if (read(STDIN_FILENO, &sequence[0], 1) == -1)
+            return '\x1b';
+        if (read(STDIN_FILENO, &sequence[1], 1) == -1)
+            return '\x1b';
+
+        if (sequence[0] == '[') {
+            if (sequence[1] >= 0 && sequence[1] <= 9) {
+                if (read(STDIN_FILENO, &sequence[2], 1) != 1) return '\x1b';
+                switch (sequence[2]) {
+                    case '3': return DELETE_KEY;
+                }
+            }
+            switch (sequence[1]) {
+                case 'A': return ARROW_UP;
+                case 'B': return ARROW_DOWN;
+                case 'C': return ARROW_RIGHT;
+                case 'D': return ARROW_LEFT;
+            }
+        }
+        return '\x1b';
+    }
     return c;
 }
 
