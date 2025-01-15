@@ -3,10 +3,11 @@
 #include "output.h"
 #include "input.h"
 #include "cfg.h"
+#include "fileio.h"
 
 #define version "0.0.1"
 
-CFG cfg = {0, 0, 0, 0};
+CFG cfg = {0, 0, 0, 0, 0, 0};
 
 void init() {
     enable_raw_terminal();
@@ -14,8 +15,11 @@ void init() {
         kill_self("get window size");
 }
 
-int main(){
+int main(int argc, char* argv[]){
     init();
+    if (argc > 1) {
+        open_file(&cfg, argv[1]);
+    }
 
     while (1) {
         refresh_screen(&cfg);

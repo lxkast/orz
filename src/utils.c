@@ -6,6 +6,6 @@
 void kill_self(const char* s) {
     clear_screen();
 
-    printf("%s", s);
+    printf("%s\r\n", s);
     exit(1);
 }
