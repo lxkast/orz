@@ -15,6 +15,24 @@ void clear_screen() {
     write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
+void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
+    char* pos_text;
+    asprintf(&pos_text, "%d;%d", cfg->cy + 1, cfg->cx + 1);
+    int pos_length = strlen(pos_text);
+
+    if (cfg->screen_cols > pos_length + 3) {
+        // not a fan of this, might change later
+        char* line = malloc(cfg->screen_cols);
+        for (int i = 0; i < cfg->screen_cols - pos_length - 2; ++i) {
+            line[i] = ' ';
+        }
+        memcpy(&line[cfg->screen_cols - pos_length - 2], pos_text, strlen(pos_text));
+        line[cfg->screen_cols + pos_length] = '\0';
+        tb_append(tb, line, strlen(line));
+        free(line);
+    }
+}
+
 void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
     write(STDOUT_FILENO, "\x1b[H", 3);
     tb_append(tb, "\x1b[K", 3);
@@ -32,8 +50,7 @@ void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
             // erase everything right of cursor on current line
             tb_append(tb, "\x1b[K", 3);
     }
-    tb_append(tb, "~", 1);
-   
+    draw_bottom_row(cfg, tb);
 }
 
 void refresh_screen(CFG* cfg) {
@@ -43,6 +60,7 @@ void refresh_screen(CFG* cfg) {
 
     draw_rows(cfg, &tb);
     
+    // set cursor pos
     char buffer[32];
     snprintf(buffer, sizeof(buffer), "\x1b[%d;%dH", cfg->cy + 1, cfg->cx + 1);
     tb_append(&tb, buffer, strlen(buffer));

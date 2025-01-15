@@ -5,9 +5,14 @@
 #include "cfg.h"
 #include "fileio.h"
 
-#define version "0.0.1"
+/*
+          TODOS
+          -----
+    - cursor position on bottom line
+    - vertical and horizontal scrolling
+*/
 
-CFG cfg = {0, 0, 0, 0, 0, 0};
+CFG cfg = {0, 0, 0, 0, 0, 0, 0};
 
 void init() {
     enable_raw_terminal();

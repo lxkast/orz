@@ -53,6 +53,8 @@ int read_key() {
 }
 
 int get_cursor_pos(int* row, int* col) {
+    // USE cx and cy FROM THE CFG INSTEAD OF THIS FUNCTION IF POSSIBLE!
+    // THIS IS USED (SOON) AS A FALLBACK OPTION FOR GETTING TERMINAL SIZE
     char buffer[32];
     unsigned int i = 0;
     // query the terminal for cursor pos
@@ -92,7 +94,7 @@ void enable_raw_terminal() {
     // and disable canonical mode (reading input line by line)
     // and disable ctrl-c and ctrl-z signals
     // and disable ctrl-v signals.
-    terminal_attributes.c_lflag &= ~(ECHO | ICANON | ISIG | ISIG);
+    terminal_attributes.c_lflag &= ~(ECHO | ICANON | ISIG);
     // disable output post-processing
     terminal_attributes.c_oflag &= ~(OPOST);
     terminal_attributes.c_cc[VMIN] = 0;

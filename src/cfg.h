@@ -11,6 +11,7 @@ typedef struct CFG {
     int num_rows;
     // dynamically allocated array of text rows
     TEXT_ROW* trow;
+    int view_row_offset;
 } CFG;
 
 void add_row(CFG*, char*, int);
