@@ -10,7 +10,8 @@ void open_file(CFG* cfg, char* filename) {
     FILE* f = fopen(filename, "r");
     if (!f) {
         char* msg;
-        asprintf(&msg, "Unable to open file %s", filename);
+        if (asprintf(&msg, "Unable to open file %s", filename) == -1)
+            kill_self("asprintf");
         kill_self(msg);
     }
 

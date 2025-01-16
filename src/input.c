@@ -11,12 +11,16 @@ void move_cursor(CFG* cfg, int key) {
                 cfg->cx--;
             break;
         case ARROW_DOWN:
-            if (cfg->cy < cfg->screen_rows)
+            if (cfg->cy < cfg->screen_rows - 2)
                 cfg->cy++;
+            else if (cfg->view_row_offset < cfg->num_rows - cfg->screen_rows + 1)
+                cfg->view_row_offset++;
             break;
         case ARROW_UP:
             if (cfg->cy > 0)
                 cfg->cy--;
+            else if (cfg->view_row_offset > 0)
+                cfg->view_row_offset--;
             break;
         case ARROW_RIGHT:
             if (cfg->cx < cfg->screen_cols)

@@ -8,8 +8,11 @@
 /*
           TODOS
           -----
-    - cursor position on bottom line
-    - vertical and horizontal scrolling
+    - disable ctrl-v terminal signal
+    - horizontal scrolling
+    - vim style scrolling?
+    - wtf is RO?
+    - when moving cursor only move along current column or end of previous line
 */
 
 CFG cfg = {0, 0, 0, 0, 0, 0, 0};

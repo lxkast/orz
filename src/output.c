@@ -1,5 +1,6 @@
 #include "output.h"
 #include "textbuffer.h"
+#include "terminal.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -17,7 +18,7 @@ void clear_screen() {
 
 void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
     char* pos_text;
-    asprintf(&pos_text, "%d;%d", cfg->cy + 1, cfg->cx + 1);
+    asprintf(&pos_text, "%d;%d", cfg->cy + cfg->view_row_offset + 1, cfg->cx + 1);
     int pos_length = strlen(pos_text);
 
     if (cfg->screen_cols > pos_length + 3) {
@@ -31,17 +32,19 @@ void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
         tb_append(tb, line, strlen(line));
         free(line);
     }
+    free(pos_text);
 }
 
 void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
     write(STDOUT_FILENO, "\x1b[H", 3);
     tb_append(tb, "\x1b[K", 3);
     for (int i = 0; i < cfg->screen_rows - 1; ++i) {
-        if (i < cfg->num_rows) {
-            if (cfg->trow[i].length > cfg->screen_cols)
-                tb_append(tb, cfg->trow[i].text, cfg->screen_cols);
+        int row_index = i + cfg->view_row_offset;
+        if (row_index < cfg->num_rows) {
+            if (cfg->trow[row_index].length > cfg->screen_cols)
+                tb_append(tb, cfg->trow[row_index].text, cfg->screen_cols);
             else
-                tb_append(tb, cfg->trow[i].text, cfg->trow[i].length);
+                tb_append(tb, cfg->trow[row_index].text, cfg->trow[row_index].length);
             tb_append(tb, "\r\n", 2);
         }
         else {
@@ -57,6 +60,9 @@ void refresh_screen(CFG* cfg) {
     TEXTBUFFER tb = {NULL, 0};
     // hide cursor
     tb_append(&tb, "\x1b[?25l", 6);
+
+    if (get_window_size(&cfg->screen_rows, &cfg->screen_cols) == -1)
+        kill_self("get window size");
 
     draw_rows(cfg, &tb);
     
