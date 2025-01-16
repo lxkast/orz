@@ -1,4 +1,5 @@
 #include "output.h"
+#include "utils.h"
 #include "textbuffer.h"
 #include "terminal.h"
 #include <stdlib.h>
@@ -18,18 +19,18 @@ void clear_screen() {
 
 void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
     char* pos_text;
-    asprintf(&pos_text, "%d;%d", cfg->cy + cfg->view_row_offset + 1, cfg->cx + 1);
+    asprintf(&pos_text, "%d;%d  ", cfg->cy + cfg->view_row_offset + 1, cfg->cx + 1);
     int pos_length = strlen(pos_text);
 
     if (cfg->screen_cols > pos_length + 3) {
         // not a fan of this, might change later
-        char* line = malloc(cfg->screen_cols);
+        char* line = malloc(cfg->screen_cols + 1);
         for (int i = 0; i < cfg->screen_cols - pos_length - 2; ++i) {
             line[i] = ' ';
         }
         memcpy(&line[cfg->screen_cols - pos_length - 2], pos_text, strlen(pos_text));
-        line[cfg->screen_cols + pos_length] = '\0';
-        tb_append(tb, line, strlen(line));
+        line[cfg->screen_cols] = '\0';
+        tb_append(tb, line, cfg->screen_cols);
         free(line);
     }
     free(pos_text);
@@ -41,10 +42,12 @@ void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
     for (int i = 0; i < cfg->screen_rows - 1; ++i) {
         int row_index = i + cfg->view_row_offset;
         if (row_index < cfg->num_rows) {
-            if (cfg->trow[row_index].length > cfg->screen_cols)
-                tb_append(tb, cfg->trow[row_index].text, cfg->screen_cols);
-            else
-                tb_append(tb, cfg->trow[row_index].text, cfg->trow[row_index].length);
+            int length = cfg->trow[row_index].length - cfg->view_col_offset;
+            if (length < 0)
+                length = 0;
+            if (length > cfg->screen_cols)
+                length = cfg->screen_cols;
+            tb_append(tb, &cfg->trow[row_index].text[cfg->view_col_offset], length);
             tb_append(tb, "\r\n", 2);
         }
         else {
