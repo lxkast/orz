@@ -19,7 +19,7 @@ void clear_screen() {
 
 void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
     char* pos_text;
-    asprintf(&pos_text, "%d;%d  ", cfg->cy + cfg->view_row_offset + 1, cfg->cx + 1);
+    asprintf(&pos_text, "%d;%d  ", cfg->cy + 1, cfg->cx + 1);
     int pos_length = strlen(pos_text);
 
     if (cfg->screen_cols > pos_length + 3) {
@@ -39,7 +39,7 @@ void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
 void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
     write(STDOUT_FILENO, "\x1b[H", 3);
     tb_append(tb, "\x1b[K", 3);
-    for (int i = 0; i < cfg->screen_rows - 1; ++i) {
+    for (int i = 0; i < cfg->screen_rows; ++i) {
         int row_index = i + cfg->view_row_offset;
         if (row_index < cfg->num_rows) {
             int length = cfg->trow[row_index].length - cfg->view_col_offset;
@@ -59,8 +59,26 @@ void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
     draw_bottom_row(cfg, tb);
 }
 
+void scroll(CFG* cfg) {
+    if (cfg->cy < cfg->view_row_offset) {
+        cfg->view_row_offset = cfg->cy;
+    }
+    if (cfg->cy >= cfg->view_row_offset + cfg->screen_rows) {
+        cfg->view_row_offset = cfg->cy - cfg->screen_rows + 1;
+    }
+    if (cfg->cx < cfg->view_col_offset) {
+        cfg->view_col_offset = cfg->cx;
+    }
+    if (cfg->cx >= cfg->view_col_offset + cfg->screen_cols) {
+        cfg->view_col_offset = cfg->cx - cfg->screen_cols + 1;
+    }
+}
+
 void refresh_screen(CFG* cfg) {
     TEXTBUFFER tb = {NULL, 0};
+
+    scroll(cfg);
+
     // hide cursor
     tb_append(&tb, "\x1b[?25l", 6);
 
@@ -71,7 +89,11 @@ void refresh_screen(CFG* cfg) {
     
     // set cursor pos
     char buffer[32];
-    snprintf(buffer, sizeof(buffer), "\x1b[%d;%dH", cfg->cy + 1, cfg->cx + 1);
+    snprintf(buffer, 
+        sizeof(buffer), 
+        "\x1b[%d;%dH", 
+        cfg->cy - cfg->view_row_offset + 1,
+        cfg->cx - cfg->view_col_offset + 1);
     tb_append(&tb, buffer, strlen(buffer));
 
     // show cursor

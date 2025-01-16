@@ -15,7 +15,7 @@ int get_window_size(int* rows, int* cols) {
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1)
         return -1;
     else {
-        *rows = ws.ws_row;
+        *rows = ws.ws_row - 1; // -1 so we can leave bottom row clear
         *cols = ws.ws_col;
         return 0;
     }

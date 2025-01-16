@@ -5,30 +5,23 @@
 #include <stdlib.h>
 
 void move_cursor(CFG* cfg, int key) {
+    TEXT_ROW* row = (cfg->cy >= cfg->num_rows) ? NULL : &cfg->trow[cfg->cy];
     switch (key) {
         case ARROW_LEFT:
             if (cfg->cx > 0)
                 cfg->cx--;
-            else if (cfg->view_col_offset > 0)
-                cfg->view_col_offset--;
             break;
         case ARROW_DOWN:
-            if (cfg->cy < cfg->screen_rows - 2)
+            if (cfg->cy < cfg->num_rows)
                 cfg->cy++;
-            else if (cfg->view_row_offset < cfg->num_rows - cfg->screen_rows + 1)
-                cfg->view_row_offset++;
             break;
         case ARROW_UP:
             if (cfg->cy > 0)
                 cfg->cy--;
-            else if (cfg->view_row_offset > 0)
-                cfg->view_row_offset--;
             break;
         case ARROW_RIGHT:
-            if (cfg->cx < cfg->screen_cols - 1)
+            if (row && row->length > cfg->cx)
                 cfg->cx++;
-            else
-                cfg->view_col_offset++;
             break;
     }
 }
