@@ -13,6 +13,7 @@ typedef struct CFG {
     TEXT_ROW* trow;
     int view_row_offset;
     int view_col_offset;
+    int last_cx;
 } CFG;
 
 void add_row(CFG*, char*, int);

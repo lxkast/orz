@@ -8,11 +8,17 @@ void move_cursor(CFG* cfg, int key) {
     TEXT_ROW* row = (cfg->cy >= cfg->num_rows) ? NULL : &cfg->trow[cfg->cy];
     switch (key) {
         case ARROW_LEFT:
-            if (cfg->cx > 0)
+            if (cfg->cx > 0) {
                 cfg->cx--;
+            }
+            else if (cfg->cy > 0) {
+                cfg->cy--;
+                cfg->cx = cfg->trow[cfg->cy].length;
+            }
+            cfg->last_cx = cfg->cx;
             break;
         case ARROW_DOWN:
-            if (cfg->cy < cfg->num_rows)
+            if (cfg->cy < cfg->num_rows - 1)
                 cfg->cy++;
             break;
         case ARROW_UP:
@@ -20,9 +26,18 @@ void move_cursor(CFG* cfg, int key) {
                 cfg->cy--;
             break;
         case ARROW_RIGHT:
-            if (row && row->length > cfg->cx)
+            if (row && row->length > cfg->cx) {
                 cfg->cx++;
+                cfg->last_cx = cfg->cx;
+            }
             break;
+    }
+
+    row = (cfg->cy >= cfg->num_rows) ? NULL : &cfg->trow[cfg->cy];
+    int row_length = row ? row->length : 0;
+    cfg->cx = cfg->last_cx;
+    if (cfg->cx > row_length) {
+        cfg->cx= row_length;
     }
 }
 
