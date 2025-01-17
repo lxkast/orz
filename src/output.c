@@ -19,16 +19,16 @@ void clear_screen() {
 
 void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
     char* pos_text;
-    asprintf(&pos_text, "%d;%d  ", cfg->cy + 1, cfg->cx + 1);
+    asprintf(&pos_text, "%d;%d   ", cfg->cy + 1, cfg->cx + 1);
     int pos_length = strlen(pos_text);
 
     if (cfg->screen_cols > pos_length + 3) {
         // not a fan of this, might change later
         char* line = malloc(cfg->screen_cols + 1);
-        for (int i = 0; i < cfg->screen_cols - pos_length - 2; ++i) {
+        for (int i = 0; i < cfg->screen_cols - pos_length - 1; ++i) {
             line[i] = ' ';
         }
-        memcpy(&line[cfg->screen_cols - pos_length - 2], pos_text, strlen(pos_text));
+        memcpy(&line[cfg->screen_cols - pos_length - 1], pos_text, strlen(pos_text));
         line[cfg->screen_cols] = '\0';
         tb_append(tb, line, cfg->screen_cols);
         free(line);
@@ -99,6 +99,7 @@ void refresh_screen(CFG* cfg) {
 
     // show cursor
     tb_append(&tb, "\x1b[?25h", 6);
+
     write(STDOUT_FILENO, tb.buffer, tb.len);
     tb_free(&tb);
 }

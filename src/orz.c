@@ -10,8 +10,8 @@
           -----
     - disable ctrl-v terminal signal
     - handle tabs
-    - find out why opening the makefile skips the first line on vcscode terminal
-    -- resolve asprintf and getline compiler warning
+    - character left after cursor pos
+    - resolve asprintf and getline compiler warning
 */
 
 CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0};

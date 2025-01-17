@@ -18,8 +18,13 @@ void move_cursor(CFG* cfg, int key) {
             cfg->last_cx = cfg->cx;
             break;
         case ARROW_DOWN:
-            if (cfg->cy < cfg->num_rows - 1)
+            if (cfg->cy == cfg->num_rows - 1) {
+                cfg->cx = cfg->trow[cfg->cy].length;
+                cfg->last_cx = cfg->cx;
+            }
+            if (cfg->cy < cfg->num_rows - 1) {
                 cfg->cy++;
+            }
             break;
         case ARROW_UP:
             if (cfg->cy > 0)
