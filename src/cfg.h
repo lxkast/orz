@@ -3,6 +3,10 @@
 typedef struct TEXT_ROW{
     char* text;
     int length;
+    // render stores the characters of a row that
+    // will be printed to the terminal
+    char* render;
+    int render_length;
 } TEXT_ROW;
 
 typedef struct CFG {
@@ -17,7 +21,3 @@ typedef struct CFG {
     int view_col_offset;
     char* filename;
 } CFG;
-
-void add_row(CFG*, char*, int);
-
-int renderx_to_cx(TEXT_ROW*, int);

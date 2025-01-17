@@ -2,6 +2,8 @@
 #include "utils.h"
 #include "textbuffer.h"
 #include "terminal.h"
+#include "row.h"
+#include "cfg.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -56,19 +58,21 @@ void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
     // move cursor to top left and erase line
     tb_append(tb, "\x1b[H", 3);
     tb_append(tb, "\x1b[K", 3);
+
     for (int i = 0; i < cfg->screen_rows; ++i) {
         int row_index = i + cfg->view_row_offset;
         if (row_index < cfg->num_rows) {
-            int length = cfg->trow[row_index].length - cfg->view_col_offset;
+            int length = cfg->trow[row_index].render_length - cfg->view_col_offset;
             if (length < 0)
                 length = 0;
             if (length > cfg->screen_cols)
                 length = cfg->screen_cols;
-            tb_append(tb, &cfg->trow[row_index].text[cfg->view_col_offset], length);
+            tb_append(tb, &cfg->trow[row_index].render[cfg->view_col_offset], length);
             tb_append(tb, "\r\n", 2);
         }
         else {
-            tb_append(tb, "~\r\n", 3);
+            if (cfg->num_rows != 0 || row_index != 0)
+                tb_append(tb, "~\r\n", 3);
         }
             // erase everything right of cursor on current line
             tb_append(tb, "\x1b[K", 3);

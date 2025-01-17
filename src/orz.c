@@ -9,11 +9,10 @@
           TODOS
           -----
     - disable ctrl-v terminal signal
-    - handle tabs
-    - character left after cursor pos
     - resolve asprintf and getline compiler warning
     - smart vim-like scrolling
-    - make horizontal scrolling left not awful
+    - make scrolling left not awful
+    - some sort of welcome message, maybe orz ascii art
 */
 
 CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

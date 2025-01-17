@@ -1,10 +1,11 @@
+#include "fileio.h"
+#include "utils.h"
+#include "cfg.h"
+#include "row.h"
 #include <sys/types.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "fileio.h"
-#include "utils.h"
-#include "cfg.h"
 
 void open_file(CFG* cfg, char* filename) {
     cfg->filename = malloc(strlen(filename) + 1);
