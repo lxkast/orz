@@ -16,7 +16,7 @@
     - make horizontal scrolling left not awful
 */
 
-CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void init() {
     enable_raw_terminal();

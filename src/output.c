@@ -18,22 +18,38 @@ void clear_screen() {
 }
 
 void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
-    char* pos_text;
-    asprintf(&pos_text, "%d;%d   ", cfg->cy + 1, cfg->cx + 1);
-    int pos_length = strlen(pos_text);
+    // invert colour
+    tb_append(tb, "\x1b[2m", 4);
 
-    if (cfg->screen_cols > pos_length + 3) {
-        // not a fan of this, might change later
-        char* line = malloc(cfg->screen_cols + 1);
-        for (int i = 0; i < cfg->screen_cols - pos_length - 1; ++i) {
-            line[i] = ' ';
-        }
-        memcpy(&line[cfg->screen_cols - pos_length - 1], pos_text, strlen(pos_text));
-        line[cfg->screen_cols] = '\0';
-        tb_append(tb, line, cfg->screen_cols);
-        free(line);
+    // print filename
+    char filename_buffer[100];
+    int length = snprintf(
+        filename_buffer, 
+        sizeof(filename_buffer), 
+        "%.20s",
+        cfg->filename ? cfg->filename : "[untitled]");
+    if (length > cfg->screen_cols) {
+        length = cfg->screen_cols;
     }
-    free(pos_text);
+    tb_append(tb, filename_buffer, length);
+
+    // print cursor position
+    char cursor_pos_buffer[100];
+    int cursor_length = snprintf(cursor_pos_buffer, 
+        sizeof(cursor_pos_buffer), 
+        "%d;%d",
+        cfg->cy + 1, cfg->cx + 1);
+
+    for(; length < cfg->screen_cols; ++length) {
+        if (cursor_length == cfg->screen_cols - length) {
+            tb_append(tb, cursor_pos_buffer, cursor_length);
+            break;
+        }
+        tb_append(tb, " ", 1);
+    }
+
+    // un-invert
+    tb_append(tb, "\x1b[m", 3);
 }
 
 void draw_rows(CFG* cfg, TEXTBUFFER* tb) {

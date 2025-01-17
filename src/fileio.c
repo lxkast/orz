@@ -7,6 +7,8 @@
 #include "cfg.h"
 
 void open_file(CFG* cfg, char* filename) {
+    cfg->filename = malloc(strlen(filename) + 1);
+    memcpy(cfg->filename, filename, strlen(filename) + 1);
     FILE* f = fopen(filename, "r");
     if (!f) {
         char* msg;
