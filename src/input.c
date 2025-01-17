@@ -2,6 +2,7 @@
 #include "input.h"
 #include "utils.h"
 #include "output.h"
+#include "editor.h"
 #include <stdlib.h>
 
 void move_cursor(CFG* cfg, int key) {
@@ -60,5 +61,7 @@ void process_key(CFG* cfg) {
         case ARROW_RIGHT:
             move_cursor(cfg, c);
             break;
+        default:
+            insert_char(cfg, c);
     }
 }

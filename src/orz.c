@@ -8,11 +8,12 @@
 /*
           TODOS
           -----
-    - disable ctrl-v terminal signal
+    - make a function that updates cx and last_cx
     - resolve asprintf and getline compiler warning
     - smart vim-like scrolling
     - make scrolling left not awful
     - some sort of welcome message, maybe orz ascii art
+
 */
 
 CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

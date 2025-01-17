@@ -32,6 +32,19 @@ void fill_render_row(TEXT_ROW* row) {
     row->render_length = render_index;
 }
 
+void row_char_insert(TEXT_ROW* row, int c, int index) {
+    if (index < 0)
+        return;
+    if (index > row->length)
+        index = row->length;
+    row->text = realloc(row->text, row->length + 2);
+    // make space to insert new character
+    memmove(&row->text[index + 1], &row->text[index], row->length - index + 1);
+    row->length++;
+    row->text[index] = c;
+    fill_render_row(row);
+}
+
 void add_row(CFG* cfg, char* s, int length) {
     cfg->trow = realloc(cfg->trow, (cfg->num_rows + 1) * sizeof(TEXT_ROW));
     int i = cfg->num_rows;

@@ -23,8 +23,11 @@ int get_window_size(int* rows, int* cols) {
 
 int read_key() {
     char c;
-    if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN)
-        kill_self("read");
+    int red;
+    while ((red = read(STDIN_FILENO, &c, 1)) != 1) {
+        if (red == -1 && errno != EAGAIN) 
+            kill_self("read");
+    }
 
     if (c == '\x1b') {
         char sequence[3];
@@ -94,7 +97,7 @@ void enable_raw_terminal() {
     // and disable canonical mode (reading input line by line)
     // and disable ctrl-c and ctrl-z signals
     // and disable ctrl-v signals.
-    terminal_attributes.c_lflag &= ~(ECHO | ICANON | ISIG);
+    terminal_attributes.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
     // disable output post-processing
     terminal_attributes.c_oflag &= ~(OPOST);
     terminal_attributes.c_cc[VMIN] = 0;

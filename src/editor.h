@@ -1,0 +1,1 @@
+void insert_char(CFG*, int);
