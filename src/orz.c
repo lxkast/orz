@@ -8,15 +8,13 @@
 /*
           TODOS
           -----
-    - clear after pos text! 
     - disable ctrl-v terminal signal
-    - horizontal scrolling
-    - vim style scrolling?
-    - wtf is RO?
-    - when moving cursor only move along current column or end of previous line
+    - handle tabs
+    - find out why opening the makefile skips the first line on vcscode terminal
+    -- resolve asprintf and getline compiler warning
 */
 
-CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0};
+CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void init() {
     enable_raw_terminal();

@@ -37,7 +37,8 @@ void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
 }
 
 void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
-    write(STDOUT_FILENO, "\x1b[H", 3);
+    // move cursor to top left and erase line
+    tb_append(tb, "\x1b[H", 3);
     tb_append(tb, "\x1b[K", 3);
     for (int i = 0; i < cfg->screen_rows; ++i) {
         int row_index = i + cfg->view_row_offset;
