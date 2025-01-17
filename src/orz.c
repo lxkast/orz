@@ -12,9 +12,11 @@
     - handle tabs
     - character left after cursor pos
     - resolve asprintf and getline compiler warning
+    - smart vim-like scrolling
+    - make horizontal scrolling left not awful
 */
 
-CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void init() {
     enable_raw_terminal();

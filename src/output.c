@@ -61,17 +61,22 @@ void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
 }
 
 void scroll(CFG* cfg) {
+    cfg->renderx = 0;
+    if (cfg->cy < cfg->num_rows) {
+        cfg->renderx = renderx_to_cx(&cfg->trow[cfg->cy], cfg->cx);
+    }
+
     if (cfg->cy < cfg->view_row_offset) {
         cfg->view_row_offset = cfg->cy;
     }
     if (cfg->cy >= cfg->view_row_offset + cfg->screen_rows) {
         cfg->view_row_offset = cfg->cy - cfg->screen_rows + 1;
     }
-    if (cfg->cx < cfg->view_col_offset) {
-        cfg->view_col_offset = cfg->cx;
+    if (cfg->renderx < cfg->view_col_offset) {
+        cfg->view_col_offset = cfg->renderx;
     }
-    if (cfg->cx >= cfg->view_col_offset + cfg->screen_cols) {
-        cfg->view_col_offset = cfg->cx - cfg->screen_cols + 1;
+    if (cfg->renderx >= cfg->view_col_offset + cfg->screen_cols) {
+        cfg->view_col_offset = cfg->renderx - cfg->screen_cols + 1;
     }
 }
 
@@ -94,7 +99,7 @@ void refresh_screen(CFG* cfg) {
         sizeof(buffer), 
         "\x1b[%d;%dH", 
         cfg->cy - cfg->view_row_offset + 1,
-        cfg->cx - cfg->view_col_offset + 1);
+        cfg->renderx - cfg->view_col_offset + 1);
     tb_append(&tb, buffer, strlen(buffer));
 
     // show cursor
