@@ -50,6 +50,18 @@ void move_cursor(CFG* cfg, int key) {
 
 void process_non_insert_key(CFG* cfg, int c) {
     switch (c) {
+        case 'h':
+            move_cursor(cfg, ARROW_LEFT);
+            break;
+        case 'j':
+            move_cursor(cfg, ARROW_DOWN);
+            break;
+        case 'k':
+            move_cursor(cfg, ARROW_UP);
+            break;
+        case 'l':
+            move_cursor(cfg, ARROW_RIGHT);
+            break;
         case '0':
             cfg->cx = 0;
             cfg->last_cx = 0;
@@ -74,6 +86,7 @@ void process_insert_key(CFG* cfg, int c) {
     switch (c) {
         // ENTER
         case '\r':
+            insert_line(cfg);
             break;
         case BACKSPACE:
         case CTRL('h'):

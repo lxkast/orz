@@ -10,6 +10,23 @@ void insert_char(CFG* cfg, int c) {
     cfg->last_cx = cfg->cx;
 }
 
+void insert_line(CFG* cfg) {
+    if (cfg->cx == 0) {
+        insert_row(cfg, "", 0, cfg->cy);
+    }
+    else {
+        TEXT_ROW* row = &cfg->trow[cfg->cy];
+        insert_row(cfg, &row->text[cfg->cx], row->length - cfg->cx, cfg->cy + 1);
+        row = &cfg->trow[cfg->cy];
+        row->length = cfg->cx;
+        row->text[row->length] = '\0';
+        fill_render_row(row);
+    }
+    cfg->cy++;
+    cfg->cx = 0;
+    cfg->last_cx = 0;
+}
+
 void delete_char(CFG* cfg) {
     if (cfg->cy == cfg->num_rows)
         return;

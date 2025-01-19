@@ -8,6 +8,7 @@
 /*
                        TODOS
 
+    - delete all chars
     - write from no file
     - prevent scrolling completely like normal text editors
     - show if file modified

@@ -54,9 +54,11 @@ void row_char_insert(TEXT_ROW* row, int c, int index) {
     fill_render_row(row);
 }
 
-void add_row(CFG* cfg, char* s, int length) {
+void insert_row(CFG* cfg, char* s, int length, int i) {
+    if (i < 0 || i > cfg->num_rows)
+        return;
     cfg->trow = realloc(cfg->trow, (cfg->num_rows + 1) * sizeof(TEXT_ROW));
-    int i = cfg->num_rows;
+    memmove(&cfg->trow[i + 1], &cfg->trow[i], sizeof(TEXT_ROW) * (cfg->num_rows - i));
     cfg->trow[i].length = length;
     cfg->trow[i].text = malloc(length + 1);
     memcpy(cfg->trow[i].text, s, length);
@@ -65,6 +67,10 @@ void add_row(CFG* cfg, char* s, int length) {
     cfg->trow[i].render = NULL;
     fill_render_row(&cfg->trow[i]);
     cfg->num_rows++;
+}
+
+void add_row(CFG* cfg, char* s, int length) {
+    insert_row(cfg, s, length, cfg->num_rows);
 }
 
 void append_to_row(TEXT_ROW* row, char* s, int length) {
