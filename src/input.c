@@ -84,6 +84,9 @@ void process_non_insert_key(CFG* cfg, int c) {
 
 void process_insert_key(CFG* cfg, int c) {
     switch (c) {
+        case ESC:
+            flip_mode(cfg);
+            break;
         // ENTER
         case '\r':
             insert_line(cfg);

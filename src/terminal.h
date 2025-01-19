@@ -1,4 +1,5 @@
 enum keys {
+    ESC = 27,
     BACKSPACE = 127,
     ARROW_LEFT = 1000,
     ARROW_RIGHT,

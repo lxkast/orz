@@ -35,16 +35,16 @@ int read_key(CFG* cfg) {
         refresh_screen(cfg);
     }
 
-    if (c == '\x1b') {
+    if (c == ESC) {
         char sequence[3];
-        if (read(STDIN_FILENO, &sequence[0], 1) == -1)
-            return '\x1b';
-        if (read(STDIN_FILENO, &sequence[1], 1) == -1)
-            return '\x1b';
+        if (read(STDIN_FILENO, &sequence[0], 1) == 0)
+            return ESC;
+        if (read(STDIN_FILENO, &sequence[1], 1) == 0)
+            return ESC;
 
         if (sequence[0] == '[') {
             if (sequence[1] >= 0 && sequence[1] <= 9) {
-                if (read(STDIN_FILENO, &sequence[2], 1) != 1) return '\x1b';
+                if (read(STDIN_FILENO, &sequence[2], 1) != 1) return ESC;
                 switch (sequence[2]) {
                     case '3': return DELETE_KEY;
                 }
