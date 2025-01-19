@@ -32,6 +32,15 @@ void fill_render_row(TEXT_ROW* row) {
     row->render_length = render_index;
 }
 
+void row_char_delete(TEXT_ROW* row, int index) {
+    if (index < 0 || index > row->length)
+        return;
+    
+    memmove(&row->text[index], &row->text[index + 1], row->length - index);
+    row->length--;
+    fill_render_row(row);
+}
+
 void row_char_insert(TEXT_ROW* row, int c, int index) {
     if (index < 0)
         return;
@@ -56,6 +65,25 @@ void add_row(CFG* cfg, char* s, int length) {
     cfg->trow[i].render = NULL;
     fill_render_row(&cfg->trow[i]);
     cfg->num_rows++;
+}
+
+void append_to_row(TEXT_ROW* row, char* s, int length) {
+    row->text = realloc(row->text, row->length + length + 1);
+    memcpy(&row->text[row->length], s, length);
+    row->length += length;
+    row->text[row->length] = '\0';
+    fill_render_row(row);
+}
+
+void delete_row(CFG* cfg, int row_num) {
+    if (row_num == 0 || row_num >= cfg->num_rows)
+        return;
+    free(cfg->trow[row_num].render);
+    free(cfg->trow[row_num].text);
+    memmove(&cfg->trow[row_num], 
+            &cfg->trow[row_num + 1],  
+            sizeof(TEXT_ROW) * (cfg->num_rows - row_num - 1));
+    cfg->num_rows--;
 }
 
 int renderx_to_cx(TEXT_ROW* row, int cx) {

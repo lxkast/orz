@@ -1,5 +1,6 @@
 #include "terminal.h"
 #include "utils.h"
+#include "output.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -21,12 +22,17 @@ int get_window_size(int* rows, int* cols) {
     }
 }
 
-int read_key() {
+// need cfg so we can refresh the screen if no input
+int read_key(CFG* cfg) {
+    
     char c;
-    int red;
-    while ((red = read(STDIN_FILENO, &c, 1)) != 1) {
+    while (1) {
+        ssize_t red = read(STDIN_FILENO, &c, 1);
         if (red == -1 && errno != EAGAIN) 
             kill_self("read");
+        if (red != 0 && red != -1)
+            break;
+        refresh_screen(cfg);
     }
 
     if (c == '\x1b') {

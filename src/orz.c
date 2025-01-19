@@ -8,11 +8,15 @@
 /*
                        TODOS
 
+    - write from no file
+    - prevent scrolling completely like normal text editors
+    - show if file modified
     - make a function that updates cx and last_cx
     - resolve compiler warnings
     - smart vim-like scrolling
     - make scrolling left not awful
     - some sort of welcome message, maybe orz ascii art
+    - undo stack
 
 */
 

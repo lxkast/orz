@@ -50,8 +50,23 @@ void move_cursor(CFG* cfg, int key) {
 
 void process_non_insert_key(CFG* cfg, int c) {
     switch (c) {
+        case '0':
+            cfg->cx = 0;
+            cfg->last_cx = 0;
+            break;
+        case '$':
+            if (cfg->num_rows != 0) {
+                cfg->cx = cfg->trow[cfg->cy].length;
+                cfg->last_cx = cfg->cx;
+            }
+            break;
+        case 'x':
+            move_cursor(cfg, ARROW_RIGHT);
+            delete_char(cfg);
+            break;
         case 'i':
             flip_mode(cfg);
+            break;
     }
 }
 
@@ -62,6 +77,7 @@ void process_insert_key(CFG* cfg, int c) {
             break;
         case BACKSPACE:
         case CTRL('h'):
+            delete_char(cfg);
             break;
         default:
             insert_char(cfg, c);
@@ -69,7 +85,7 @@ void process_insert_key(CFG* cfg, int c) {
 }
 
 void process_key(CFG* cfg) {
-    int c = read_key();
+    int c = read_key(cfg);
     switch (c) {
         case CTRL('w'):
             clear_screen();

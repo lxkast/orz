@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 
 char* export_string(CFG* cfg, int* length) {
     int total_length;
@@ -54,6 +55,10 @@ void save_to_disk(CFG* cfg) {
         close(file_descriptor);
     }
     free(buffer);
+    char* msg;
+    asprintf(&msg, "Unable to save. %s", strerror(errno));
+    show_msg(cfg, msg);
+    free(msg);
 }
 
 void open_file(CFG* cfg, char* filename) {
