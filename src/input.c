@@ -75,8 +75,15 @@ void process_non_insert_key(CFG* cfg, int c) {
         case 'x':
             move_cursor(cfg, ARROW_RIGHT);
             delete_char(cfg);
+            if (cfg->cx == cfg->trow[cfg->cy].length) {
+                move_cursor(cfg, ARROW_LEFT);
+            }
             break;
         case 'i':
+            flip_mode(cfg);
+            break;
+        case 'a':
+            move_cursor(cfg, ARROW_RIGHT);
             flip_mode(cfg);
             break;
     }
@@ -86,6 +93,9 @@ void process_insert_key(CFG* cfg, int c) {
     switch (c) {
         case ESC:
             flip_mode(cfg);
+            if (cfg->cx != 0) {
+                move_cursor(cfg, ARROW_LEFT);
+            }
             break;
         // ENTER
         case '\r':
