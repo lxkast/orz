@@ -6,6 +6,50 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+char* export_string(CFG* cfg, int* length) {
+    int total_length;
+    for (int i = 0; i < cfg->num_rows; ++i) {
+        total_length += cfg->trow[i].length + 1; // +1 for \n
+    }
+    *length = total_length;
+
+    char* buffer = malloc(total_length);
+    char* next_space = buffer;
+    for (int i = 0; i < cfg->num_rows; ++i) {
+        memcpy(next_space, cfg->trow[i].text, cfg->trow[i].length);
+        next_space += cfg->trow[i].length;
+        *next_space = '\n';
+        next_space++;
+    }
+
+    // caller better free this!
+    return buffer;
+}
+
+void save_to_disk(CFG* cfg) {
+    // in the future, write to temp file first then rename
+
+    if (cfg->filename == NULL)
+        return;
+
+    int length;
+    char* buffer = export_string(cfg, &length);
+    int file_descriptor = open(cfg->filename, O_RDWR | O_CREAT, 0644);
+    if (file_descriptor != -1) {
+        if (ftruncate(file_descriptor, length)!= -1) {
+            write(file_descriptor, buffer, length);
+            close(file_descriptor);
+            free(buffer);
+            return;
+        }
+
+        close(file_descriptor);
+    }
+    free(buffer);
+}
 
 void open_file(CFG* cfg, char* filename) {
     cfg->filename = malloc(strlen(filename) + 1);

@@ -20,4 +20,7 @@ typedef struct CFG {
     int view_row_offset;
     int view_col_offset;
     char* filename;
+    _Bool insert_mode;
 } CFG;
+
+void flip_mode(CFG* cfg);

@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "output.h"
 #include "editor.h"
+#include "fileio.h"
 #include <stdlib.h>
 
 void move_cursor(CFG* cfg, int key) {
@@ -47,21 +48,49 @@ void move_cursor(CFG* cfg, int key) {
     }
 }
 
+void process_non_insert_key(CFG* cfg, int c) {
+    switch (c) {
+        case 'i':
+            flip_mode(cfg);
+    }
+}
+
+void process_insert_key(CFG* cfg, int c) {
+    switch (c) {
+        // ENTER
+        case '\r':
+            break;
+        case BACKSPACE:
+        case CTRL('h'):
+            break;
+        default:
+            insert_char(cfg, c);
+    }
+}
+
 void process_key(CFG* cfg) {
     int c = read_key();
     switch (c) {
         case CTRL('w'):
             clear_screen();
             exit(0);
-            break;
+            return;
+        case CTRL('s'):
+            save_to_disk(cfg);
+            return;
 
         case ARROW_UP:
         case ARROW_DOWN:
         case ARROW_LEFT:
         case ARROW_RIGHT:
             move_cursor(cfg, c);
-            break;
-        default:
-            insert_char(cfg, c);
+            return;
+    }
+
+    if (cfg->insert_mode) {
+        process_insert_key(cfg, c);
+    }
+    else {
+        process_non_insert_key(cfg, c);
     }
 }

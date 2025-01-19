@@ -20,20 +20,38 @@ void clear_screen() {
 }
 
 void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
-    // invert colour
-    tb_append(tb, "\x1b[2m", 4);
+    int length;
+    if (cfg->insert_mode) {
+        // bold
+        tb_append(tb, "\x1b[1m", 4);
+        char* insert_text = "[-- INSERT --]";
+        length = strlen(insert_text);
+        if (length > cfg->screen_cols) {
+            length = cfg->screen_cols;
+        }
+        tb_append(tb, insert_text, length);
 
-    // print filename
-    char filename_buffer[100];
-    int length = snprintf(
-        filename_buffer, 
-        sizeof(filename_buffer), 
-        "%.20s",
-        cfg->filename ? cfg->filename : "[untitled]");
-    if (length > cfg->screen_cols) {
-        length = cfg->screen_cols;
+        // unbold
+        tb_append(tb, "\x1b[m", 3);
     }
-    tb_append(tb, filename_buffer, length);
+    else {
+        // low intensity text
+        tb_append(tb, "\x1b[2m", 4);
+        // print filename
+        char filename_buffer[100];
+        length = snprintf(
+            filename_buffer, 
+            sizeof(filename_buffer), 
+            "%.20s",
+            cfg->filename ? cfg->filename : "[untitled]");
+        if (length > cfg->screen_cols) {
+            length = cfg->screen_cols;
+        }
+        tb_append(tb, filename_buffer, length);
+    }
+
+    // low intensity text
+    tb_append(tb, "\x1b[2m", 4);
 
     // print cursor position
     char cursor_pos_buffer[100];
@@ -71,8 +89,7 @@ void draw_rows(CFG* cfg, TEXTBUFFER* tb) {
             tb_append(tb, "\r\n", 2);
         }
         else {
-            if (cfg->num_rows != 0 || row_index != 0)
-                tb_append(tb, "~\r\n", 3);
+            tb_append(tb, "~\r\n", 3);
         }
             // erase everything right of cursor on current line
             tb_append(tb, "\x1b[K", 3);
