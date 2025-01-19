@@ -19,36 +19,55 @@ void clear_screen() {
     write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
+int draw_msg(CFG* cfg, TEXTBUFFER* tb) {
+    // bold
+    tb_append(tb, "\x1b[1m", 4);
+    int length = strlen(cfg->msg);
+    if (length > cfg->screen_cols) {
+        length = cfg->screen_cols;
+    }
+    tb_append(tb, cfg->msg, length);
+    // un-bold
+    tb_append(tb, "\x1b[m", 3);
+    return length;
+}
+
 void draw_bottom_row(CFG* cfg, TEXTBUFFER* tb) {
     int length;
-    if (cfg->insert_mode) {
-        // bold
-        tb_append(tb, "\x1b[1m", 4);
-        char* insert_text = "[-- INSERT --]";
-        length = strlen(insert_text);
-        if (length > cfg->screen_cols) {
-            length = cfg->screen_cols;
-        }
-        tb_append(tb, insert_text, length);
-
-        // unbold
-        tb_append(tb, "\x1b[m", 3);
+    if (time(NULL) - cfg->msg_time < 2) {
+        length = draw_msg(cfg, tb);
     }
     else {
-        // low intensity text
-        tb_append(tb, "\x1b[2m", 4);
-        // print filename
-        char filename_buffer[100];
-        length = snprintf(
-            filename_buffer, 
-            sizeof(filename_buffer), 
-            "%.20s",
-            cfg->filename ? cfg->filename : "[untitled]");
-        if (length > cfg->screen_cols) {
-            length = cfg->screen_cols;
+        if (cfg->insert_mode) {
+            // bold
+            tb_append(tb, "\x1b[1m", 4);
+            char* insert_text = "[-- INSERT --]";
+            length = strlen(insert_text);
+            if (length > cfg->screen_cols) {
+                length = cfg->screen_cols;
+            }
+            tb_append(tb, insert_text, length);
+
+            // unbold
+            tb_append(tb, "\x1b[m", 3);
         }
-        tb_append(tb, filename_buffer, length);
+        else {
+            // low intensity text
+            tb_append(tb, "\x1b[2m", 4);
+            // print filename
+            char filename_buffer[100];
+            length = snprintf(
+                filename_buffer, 
+                sizeof(filename_buffer), 
+                "%.20s",
+                cfg->filename ? cfg->filename : "[untitled]");
+            if (length > cfg->screen_cols) {
+                length = cfg->screen_cols;
+            }
+            tb_append(tb, filename_buffer, length);
+        }
     }
+
 
     // low intensity text
     tb_append(tb, "\x1b[2m", 4);

@@ -1,4 +1,5 @@
 #pragma once
+#include <time.h>
 
 typedef struct TEXT_ROW{
     char* text;
@@ -21,6 +22,10 @@ typedef struct CFG {
     int view_col_offset;
     char* filename;
     _Bool insert_mode;
+    char msg[100];
+    time_t msg_time;
 } CFG;
 
-void flip_mode(CFG* cfg);
+void flip_mode(CFG*);
+
+void show_msg(CFG*, char*);

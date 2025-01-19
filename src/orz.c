@@ -6,10 +6,10 @@
 #include "fileio.h"
 
 /*
-          TODOS
-          -----
+                       TODOS
+
     - make a function that updates cx and last_cx
-    - resolve asprintf and getline compiler warning
+    - resolve compiler warnings
     - smart vim-like scrolling
     - make scrolling left not awful
     - some sort of welcome message, maybe orz ascii art
@@ -19,6 +19,8 @@
 CFG cfg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void init() {
+    cfg.msg[0] = '\0';
+    cfg.msg_time = 0;
     enable_raw_terminal();
     if (get_window_size(&cfg.screen_rows, &cfg.screen_cols) == -1)
         kill_self("get window size");

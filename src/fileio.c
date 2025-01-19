@@ -43,6 +43,11 @@ void save_to_disk(CFG* cfg) {
             write(file_descriptor, buffer, length);
             close(file_descriptor);
             free(buffer);
+            
+            char* msg;
+            asprintf(&msg, "Saved to %s", cfg->filename);
+            show_msg(cfg, msg);
+            free (msg);
             return;
         }
 
