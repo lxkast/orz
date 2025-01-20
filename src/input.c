@@ -62,13 +62,26 @@ void process_non_insert_key(CFG* cfg, int c) {
         case 'l':
             move_cursor(cfg, ARROW_RIGHT);
             break;
+        case 'o':
+            cfg->cx = cfg->trow[cfg->cy].length;
+            insert_line(cfg);
+            flip_mode(cfg);
+            break;
+        case 'O':
+            cfg->cx = 0;
+            insert_line(cfg);
+            cfg->cy--;
+            flip_mode(cfg);
+            break;
         case '0':
             cfg->cx = 0;
             cfg->last_cx = 0;
             break;
         case '$':
             if (cfg->num_rows != 0) {
-                cfg->cx = cfg->trow[cfg->cy].length;
+                if (cfg->trow[cfg->cy].length <= 1)
+                    break;
+                cfg->cx = cfg->trow[cfg->cy].length - 1;
                 cfg->last_cx = cfg->cx;
             }
             break;
@@ -88,6 +101,7 @@ void process_non_insert_key(CFG* cfg, int c) {
             break;
     }
 }
+
 
 void process_insert_key(CFG* cfg, int c) {
     switch (c) {
